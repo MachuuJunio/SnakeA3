@@ -16,6 +16,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 class SnakeGame extends SurfaceView implements Runnable{
 
@@ -45,9 +46,12 @@ class SnakeGame extends SurfaceView implements Runnable{
     private Paint mPaint;
 
     // A snake ssss
-    Snake mSnake;
+    private Snake mSnake;
     // And an apple
     private Apple mApple;
+
+    private ArrayList<GameObject> objects;
+
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -102,6 +106,10 @@ class SnakeGame extends SurfaceView implements Runnable{
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
+        //Construct ArrayList for GameObjects
+        objects = new ArrayList<>();
+        objects.add(mApple);
+        objects.add(mSnake);
 
     }
 
@@ -211,8 +219,9 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
             // Draw the apple, the snake
-            mApple.draw(mCanvas, mPaint);
-            mSnake.draw(mCanvas, mPaint);
+            for(GameObject g : objects){
+                g.draw(mCanvas, mPaint);
+            }
 
 
             //Draw names on the top right corner of the app
@@ -221,7 +230,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCanvas.drawText("Tyson Huynh", 1700, 100, mPaint);
             mCanvas.drawText("Matthew Junio", 1640, 200, mPaint);
 
-            //Draw PAUSE button (currently text) at the bottom right corner
+            //Draw PAUSE button (currently text)
             mPaint.setTextSize(70);
             mCanvas.drawText("PAUSE", 1950, 950, mPaint);
 
