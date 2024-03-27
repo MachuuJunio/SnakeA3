@@ -14,6 +14,7 @@ import android.os.Build;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 import java.io.IOException;
 
 class SnakeGame extends SurfaceView implements Runnable{
@@ -24,7 +25,7 @@ class SnakeGame extends SurfaceView implements Runnable{
     private long mNextFrameTime;
     // Is the game currently playing and or paused?
     private volatile boolean mPlaying = false;
-    private volatile boolean mPaused = true;
+    volatile boolean mPaused = true;
 
     // for playing sound effects
     private SoundPool mSP;
@@ -44,10 +45,9 @@ class SnakeGame extends SurfaceView implements Runnable{
     private Paint mPaint;
 
     // A snake ssss
-    private Snake mSnake;
+    Snake mSnake;
     // And an apple
     private Apple mApple;
-
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -210,11 +210,13 @@ class SnakeGame extends SurfaceView implements Runnable{
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
-            // Draw the apple and the snake
+            // Draw the apple, the snake
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
 
+
             //Draw names on the top right corner of the app
+            //Also acts as pause button
             mCanvas.drawText("Tyson Huynh", 1500, 100, mPaint);
             mCanvas.drawText("Matthew Junio", 1400, 200, mPaint);
 
@@ -234,7 +236,6 @@ class SnakeGame extends SurfaceView implements Runnable{
                         200, 700, mPaint);
             }
 
-
             // Unlock the mCanvas and reveal the graphics for this frame
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }
@@ -242,12 +243,24 @@ class SnakeGame extends SurfaceView implements Runnable{
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+        int i = motionEvent.getActionIndex();
+        int x = (int) motionEvent.getX(i);
+        int y = (int) motionEvent.getY(i);
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
+                if(x>1400 && y<200){
+                    if(mPaused){
+                        mPaused = false;
+                        return true;
+                    }
+                    else{
+                        mPaused = true;
+                        return true;
+                    }
+                }
                 if (mPaused) {
                     mPaused = false;
                     newGame();
-
                     // Don't want to process snake direction for this tap
                     return true;
                 }
@@ -282,6 +295,4 @@ class SnakeGame extends SurfaceView implements Runnable{
         mThread.start();
     }
 
-    //this is matt
-    //tyson test
 }
