@@ -214,6 +214,11 @@ class SnakeGame extends SurfaceView implements Runnable{
             mApple.draw(mCanvas, mPaint);
             mSnake.draw(mCanvas, mPaint);
 
+            //Draw names on the top right corner of the app
+            mCanvas.drawText("Tyson Huynh", 1500, 100, mPaint);
+            mCanvas.drawText("Matthew Junio", 1400, 200, mPaint);
+
+
             // Draw some text while paused
             if(mPaused){
 
