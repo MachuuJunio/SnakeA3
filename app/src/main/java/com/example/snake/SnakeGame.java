@@ -221,7 +221,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCanvas.drawText("Tyson Huynh", 1700, 100, mPaint);
             mCanvas.drawText("Matthew Junio", 1640, 200, mPaint);
 
-            //Draw PAUSE button (currently text)
+            //Draw PAUSE button (currently text) at the bottom right corner
             mPaint.setTextSize(70);
             mCanvas.drawText("PAUSE", 1950, 950, mPaint);
 
