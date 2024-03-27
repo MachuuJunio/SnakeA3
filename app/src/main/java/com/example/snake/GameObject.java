@@ -7,11 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
-public abstract class GameObject {
-    private Point range;
-
-    public GameObject(){
-
-    }
-    abstract void draw(Canvas canvas, Paint paint);
+public interface GameObject {
+    void draw(Canvas canvas, Paint paint);
 }

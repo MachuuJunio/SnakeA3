@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class Apple extends GameObject{
+class Apple implements GameObject {
 
     // The location of the apple on the grid
     // Not in pixels
@@ -55,7 +55,7 @@ class Apple extends GameObject{
 
     // Draw the apple
     @Override
-    void draw(Canvas canvas, Paint paint){
+    public void draw(Canvas canvas, Paint paint){
         canvas.drawBitmap(mBitmapApple, location.x * mSize, location.y * mSize, paint);
 
     }
