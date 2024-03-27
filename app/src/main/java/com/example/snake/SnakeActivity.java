@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.View;
 
 public class SnakeActivity extends Activity {
 
@@ -42,4 +43,6 @@ public class SnakeActivity extends Activity {
         super.onPause();
         mSnakeGame.pause();
     }
+
+
 }
