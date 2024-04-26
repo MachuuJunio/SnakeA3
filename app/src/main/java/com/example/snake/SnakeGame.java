@@ -3,22 +3,26 @@ package com.example.snake;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import java.io.IOException;
 
 
 import androidx.constraintlayout.utils.widget.MotionButton;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 class SnakeGame extends SurfaceView implements Runnable{
@@ -308,8 +312,44 @@ class SnakeGame extends SurfaceView implements Runnable{
         return true;
 
     }
-    
 
+    @Override//for keyboard
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    mSnake.changeDirection(Snake.Heading.UP);
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    mSnake.changeDirection(Snake.Heading.DOWN);
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    mSnake.changeDirection(Snake.Heading.LEFT);
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    mSnake.changeDirection(Snake.Heading.RIGHT);
+                    break;
+
+                case KeyEvent.KEYCODE_SPACE :
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        // Toggle the pause state
+                        mPaused = !mPaused;
+
+                        // Optionally, handle the game's running state
+                        if (!mPlaying && !mPaused) {
+                            resume();
+                        } else if (mPaused) {
+                            pause();
+                        }
+
+                        return true; // Key event handled
+
+                    }
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     // Stop the thread
     public void pause() {

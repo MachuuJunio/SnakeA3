@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.View;
+import android.view.KeyEvent;
 
 public class SnakeActivity extends Activity {
 
     // Declare an instance of SnakeGame
     SnakeGame mSnakeGame;
 
-    // Set the game up
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,25 +22,34 @@ public class SnakeActivity extends Activity {
         Point size = new Point();
         display.getSize(size);
 
-        // Create a new instance of the SnakeEngine class
+        // Create a new instance of the SnakeGame class
         mSnakeGame = new SnakeGame(this, size);
 
-        // Make snakeEngine the view of the Activity
+        // Make SnakeGame the view of the Activity
         setContentView(mSnakeGame);
     }
+    // Start the thread in snakeGame
 
-    // Start the thread in snakeEngine
     @Override
     protected void onResume() {
         super.onResume();
         mSnakeGame.resume();
     }
+    // Start the thread in snakeGame
 
-    // Stop the thread in snakeEngine
     @Override
     protected void onPause() {
         super.onPause();
         mSnakeGame.pause();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Pass the event to the mSnakeGame instance
+        if (mSnakeGame != null) {
+            return mSnakeGame.onKeyDown(keyCode, event);
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 
