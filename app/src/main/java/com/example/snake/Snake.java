@@ -173,18 +173,6 @@ class Snake implements Movable, GameObject {
             }
         }
     }
-
-    void switchHeading(MotionEvent motionEvent) {
-        // Is the tap on the right hand side?
-        if (motionEvent.getX() >= halfWayPoint) {
-            // rotate right
-            heading = Heading.values()[(heading.ordinal() + 1) % Heading.values().length];
-        } else {
-            // rotate left
-            int nextIndex = (heading.ordinal() - 1) < 0 ? Heading.values().length - 1 : heading.ordinal() - 1;
-            heading = Heading.values()[nextIndex];
-        }
-    }
     public void changeDirection(Heading newDirection) {
         // Only allow the snake to turn 90 degrees
         if (Math.abs(newDirection.ordinal() - this.heading.ordinal()) % 2 == 1) {

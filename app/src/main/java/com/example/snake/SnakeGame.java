@@ -204,6 +204,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
 
             mPaused =true;
+
         }
 
     }
@@ -302,7 +303,6 @@ class SnakeGame extends SurfaceView implements Runnable{
                 }
 
                 // Let the Snake class handle the input
-                mSnake.switchHeading(motionEvent);
                 break;
 
             default:
