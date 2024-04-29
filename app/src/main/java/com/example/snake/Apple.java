@@ -33,7 +33,7 @@ class Apple implements GameObject {
         location.x = -10;
 
         // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.house);
 
         // Resize the bitmap
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);

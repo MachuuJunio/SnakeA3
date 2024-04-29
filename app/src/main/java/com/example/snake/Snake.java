@@ -37,20 +37,20 @@ class Snake implements Movable, GameObject {
         // Create and scale the bitmaps
         mBitmapHeadRight = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.truckfront);
 
         // Create 3 more versions of the head for different headings
         mBitmapHeadLeft = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.truckfront);
 
         mBitmapHeadUp = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.truckfront);
 
         mBitmapHeadDown = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.head);
+                        R.drawable.truckfront);
 
         // Modify the bitmaps to face the snake head
         // in the correct direction
@@ -82,7 +82,7 @@ class Snake implements Movable, GameObject {
         // Create and scale the body
         mBitmapBody = BitmapFactory
                 .decodeResource(context.getResources(),
-                        R.drawable.body);
+                        R.drawable.crate);
 
         mBitmapBody = Bitmap
                 .createScaledBitmap(mBitmapBody,
