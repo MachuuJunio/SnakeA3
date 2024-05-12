@@ -35,9 +35,9 @@ public class Screen {
      * @param canvas
 
     public void setCanvas(Canvas canvas){
-        this.canvas = canvas;
+    this.canvas = canvas;
     }
-    **/
+     **/
 
     /**
      * @return a Point within the constraints of the screen

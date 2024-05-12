@@ -18,6 +18,8 @@ class Snake implements Movable, GameObject {
     // How big is the entire grid
     private Point mMoveRange;
 
+    protected Point head;
+
     // For tracking movement Heading
     enum Heading { UP, RIGHT, DOWN, LEFT }
     private Heading heading = Heading.RIGHT;
@@ -147,6 +149,7 @@ class Snake implements Movable, GameObject {
     @Override
     public void draw(Canvas canvas) {
         if (!segmentLocations.isEmpty()) {
+            head = segmentLocations.get(0);
             // Draw the head
             switch (heading) {
                 case RIGHT: canvas.drawBitmap(mBitmapHeadRight, segmentLocations.get(0).x * s.blockSize,

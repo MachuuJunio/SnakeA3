@@ -15,16 +15,16 @@ public abstract class GameItem implements GameObject {
     //Contains drawing elements
     Screen s;
 
-    //number of moves for cooldown
+    //Number of frames for cooldown
     private final int COOLDOWN;
 
-    //number of moves till the GameItem disappears
+    //Number of frames till the GameItem disappears
     private final int VANISH;
 
-    //in how many moves after despawning the GameItem will return
+    //Number of frames after despawning the GameItem will return
     protected int movesTillReturn;
 
-    //in how many moves after spawning the GameItem will vanish
+    //number of  frames after spawning the GameItem will vanish
     protected int movesTillVanish;
 
     //The location of the GameItem
@@ -49,9 +49,6 @@ public abstract class GameItem implements GameObject {
         spawn(activeItems);
     }
 
-    //Creates instance of new GameItem
-    /**createGameItem() : */
-
     /**
      * Initializes the bitmapItem
      * @param context
@@ -71,7 +68,7 @@ public abstract class GameItem implements GameObject {
             Random random = new Random();
 
             //Choose two random values and place the apple
-            temp = new Point();
+            //temp = new Point();
             temp.x = random.nextInt(s.NUM_BLOCKS_WIDE) + 1;
             temp.y = random.nextInt(s.mNumBlocksHigh - 1) + 1;
             for (GameItem g : activeItems) {
@@ -101,6 +98,9 @@ public abstract class GameItem implements GameObject {
         return movesTillReturn;
     }
 
+    protected int getStayRemaining(){
+        return movesTillVanish;
+    }
 
     /**
      * Reduces the number of frames remaining till Cooldown is complete by 1
@@ -127,6 +127,32 @@ public abstract class GameItem implements GameObject {
         return false;
     }
 
+    /**
+     * In the situation where the snakehead interacts with the GameItem
+     */
+    public void reset(){
+        movesTillReturn = COOLDOWN;
+        movesTillVanish = VANISH;
+    }
+
+    /**
+     * @return type of GameItem, the GameItem is in string representation
+     */
+    public String type(){
+        if(this instanceof Food){
+            return "Food";
+        }else if(this instanceof Powerup){
+            return "Powerup";
+        }else if(this instanceof Obstacle) {
+            return "Obstacle";
+        }
+        else{
+            return "No Type";
+        }
+    }
+
+
+
     //Checks to see if movesTillReturn == 0
 
     /**
@@ -146,13 +172,14 @@ public abstract class GameItem implements GameObject {
      */
     public boolean interact(Point snakeHead) {
         if(snakeHead.equals(getLocation())) {
+            this.reset();
             return true;
         }
         return false;
     }
 
     /**
-     * @return the location of the GameObject
+     * @return the location of the GameItem
      */
     public Point getLocation() {
         return location;

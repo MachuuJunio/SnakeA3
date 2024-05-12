@@ -19,6 +19,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Comparator;
 
 
 import androidx.constraintlayout.utils.widget.MotionButton;
@@ -90,83 +92,66 @@ class SnakeGame extends SurfaceView implements Runnable{
      * It's best to keep the GameObject as an interface... wait actually that's dumb
      * it doesn't matter because the SnakeGame has a dependency relationship with GameObject
      *
-     * Modification to this class
-     * Create a private Stack caled Cooldown,
-     * It will take in a new type called, activationTime
-     * with two fields...
-     * The gameObject name
-     * the amount of moves.
-     * //the idea is that once th
+     * In update()
      *
-     * Modification to other classes
-     * GAMEOBJECT
-     * change from an interface to an abstract class
-     * Make the class implement a Comporable<GameObject>
-     * private int cooldown //cooldown time, that will remain the same for any GameObject
-     * getCooldown(): int   //in how many moves will object get spawned again
-     * compareTo(): int     //compares objects based on cooldown time
-     * getType() : String   //gets then type of GameObject
+     * //Decrements the moves till GameItems in cooldown get spawned
+     * while (!cooldown.isEmpty())
+     *      for (GameItem g: cooldown)
+     *          g.reduceCooldown();
      *
+     * //Tells if there was an intersection with the snake head
+     * GameItem interactedItem = null;
      *
-     * Modifications to the method
-     * add a conditional statement that checks whether a stack is empty.
-     * Declare a new private variable called counter, it counts the number of moves of the snake
-     * add local variable interactedObject
+     * //Decrements the moves till GameItems in activeObjects get despawned
+     * while(!activeItems.isEmpty)
+     *      for(GameItem g: activeItems)
+     *          g.reduceDespawn();
+     *          if(g.interact(snakeHead))
+     *              interactedItem = g.reset();
      *
-     * Creation of cooldown node in beginning
-     *
-     *
-     * In general
-     *
-     * //Decrements the moves till GameObjects in cooldown get spawned
-     * for (GameObject g: cooldown)
-     *      g.reduceCooldown();
-     *
-     * //Decrements the moves till GameObjects in activeObjects get despawned
-     * for(GameObject g: activeObjects)
-     *      g.reduceDespawn();
      *
      * //checks whether there is any object that interacted with the snake head
-     * if (snake.interact(activeObjects) != null)
-     *
-     *      //intializes loc variable w/GameObject that interacted with snake head
-     *      interactedObject = snake.interact(activeObjects)
+     * if (interactedItem != null)
      *
      *      //Removes the GameObject from the arraylist of present GameObjects
-     *      activeObjects.remove(interactedObject)
+     *      activeItems.remove(interactedItem)
      *
-     *      //Sorts the activeObjects based on despawn time
-     *      Collection.sort(activeObjects, Comparator.comparing(GameObject: despawnTime())
+     *      //Sorts the activeItems based on despawn time
+     *      Collection.sort(activeItems, Comparator.comparing(GameItem:: getStayRemaining())
      *
-     *      //adds the interactedObject to the cooldown menu
-     *      cooldown.add(interactedObject)
+     *      //adds the interactedItem to the cooldown menu
+     *      cooldown.add(interactedItem)
      *
      *      //Sorts the cooldown objects by cooldown time
-     *      Collection.sort(cooldown, Comparator.comparing(GameObject::getCooldownTime())
+     *      Collection.sort(cooldown, Comparator.comparing(GameItem::getCooldownRemaining())
      *
      *      //Checks to see if the interactedObject is a Powerup
-     *      if (interactedObject.type() == "Powerup")
+     *      if (interactedItem.type() == "Powerup")
      *
      *          //Initializes private var to the interactedObject
-     *          powerup = interactedObject
+     *          powerup = interactedItem
+     *
+     *          //adds the interactedItem to the snake.
+     *          mSnake.addPowerup(powerup)
      *
      *      //Checks to see if the interactedObject is a consumable
-     *      else if (interactedObject.type() == "Food")
+     *      else if (interactedItem.type() == "Food")
      *
      *          //calls the consume method.
-     *          snake.consume(interactedObject.addMass)
+     *          snake.consume(interactedItem.MASS_GAIN)
      *
      *          //plays the eat sound
      *          gameSound.play(gameSound.mEat_ID)
      *
      *          //adjusts the score
-     *          adjustScore(interactedObject.addMass)
+     *          stat.addScore(interactedItem.SCORE_GAIN)
      *
      *      //Checks if the interactedObject is an Obstacle
-     *      else  if (interactedObject.type() == "Obstacle")
+     *      else  if (interactedItem.type() == "Obstacle")
+     *           /adds the obstacle to the snake.
+     *           obstacles.add(interactedItem)
      *           gameSound.play(gameSound.mCrash_ID);
      *           mPaused = true;
-     *           adjustScore(0);
      *
      * //Checks if the powerup is non null value, and if timeup() returns true
      * if( powerup != null && powerup.timeUp())
@@ -253,9 +238,14 @@ class SnakeGame extends SurfaceView implements Runnable{
     private Screen s;
     private Context c;
     // And an apple
-    private Apple mApple;
+    private Apple mApple1;
+    private Apple mApple2;
+    private Apple mApple3;
+    private Apple mApple4;
 
     private Canvas mCanvas;
+
+    private GameObjectManager gManager;
 
     private ArrayList<GameObject> objects;
 
@@ -270,10 +260,13 @@ class SnakeGame extends SurfaceView implements Runnable{
         super(context);
         c = context;
         s = new Screen(size);
+
+        gManager = new GameObjectManager(context, s);
         //only used by draw function as of now
-        statManager = new StatManager();
+        statManager = new StatManager(gManager);
         //only used by draw function as of now
         screenManager = new ScreenManager(s, context);
+
         //used everywhere
         activeItems = new ArrayList<GameItem>();
 
@@ -289,13 +282,26 @@ class SnakeGame extends SurfaceView implements Runnable{
         // Call the constructors of our two game objects
         //used everywhere
         mSnake = new Snake(context, s);
+
         //used everywhere
-        mApple = new Apple(context, activeItems, s);
+        mApple1 = new Apple(context, activeItems, s);
+        mApple2 = new Apple(context, activeItems, s);
+        mApple3 = new Apple(context, activeItems, s);
+        mApple4 = new Apple(context, activeItems, s);
+
 
         //Construct ArrayList for GameObjects
-        activeItems.add(mApple);
-        objects = new ArrayList<>();
-        objects.add(mApple);
+
+        activeItems.add(mApple1);
+        activeItems.add(mApple2);
+        activeItems.add(mApple3);
+        activeItems.add(mApple4);
+
+        objects = new ArrayList<GameObject>();
+        objects.add(mApple1);
+        objects.add(mApple2);
+        objects.add(mApple3);
+        objects.add(mApple4);
         objects.add(mSnake);
 
     }
@@ -308,7 +314,7 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.reset();
 
         // Get the apple ready for dinner
-        mApple.spawn();
+        mApple1.spawn();
 
         // Reset the mScore
         statManager.reset();
@@ -363,22 +369,27 @@ class SnakeGame extends SurfaceView implements Runnable{
     public void update() {
         // Move the snake
         mSnake.move();
-        statManager.incrementMoveCount();
+        statManager.incrementFrameCount();
 
-        // Did the head of the snake eat the apple?
-        if(mSnake.checkDinner(mApple.getLocation())){
-            // This reminds me of Edge of Tomorrow.
-            // One day the apple will be ready!
-            mApple.spawn();
+        for(GameItem g: gManager.activeItems) {
+            // Did the head of the snake eat the apple?
+            if (mSnake.checkDinner(g.getLocation())) {
+                // This reminds me of Edge of Tomorrow.
+                // One day the apple will be ready!
+                g.spawn();
 
-            // Add to  mScore
-            statManager.incrementScore();
-            // Play a sound
-            gameSound.play(gameSound.mEat_ID);
+                // Add to  mScore
+                statManager.incrementScore();
+                // Play a sound
+                gameSound.play(gameSound.mEat_ID);
+            }
         }
-
+        /**
+         * To satisfy the "invulnerable powerup, we can check what
+         * the type of the powerup is here!!
+         */
         // Did the snake die?
-        if (mSnake.detectDeath()) {
+        if (mSnake.detectDeath() ) {
             // Pause the game ready to start again
             gameSound.play(gameSound.mCrash_ID);
 
