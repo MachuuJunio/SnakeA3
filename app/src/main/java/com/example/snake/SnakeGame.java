@@ -52,6 +52,10 @@ class SnakeGame extends SurfaceView implements Runnable{
     // And an apple
     private Apple mApple;
 
+    private Bitmap backgroundBitmap;
+    private Bitmap resizedBackground;
+
+
     private ArrayList<GameObject> objects;
 
 
@@ -59,6 +63,13 @@ class SnakeGame extends SurfaceView implements Runnable{
     // from SnakeActivity
     public SnakeGame(Context context, Point size) {
         super(context);
+
+        //Loads the background image
+        backgroundBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.road2);
+        int dstWidth = 2220;
+        int dstHeight = 1015;
+        resizedBackground = Bitmap.createScaledBitmap(backgroundBitmap, dstWidth, dstHeight, true);
+
         gameSound = new GameSound(context);
         // Work out how many pixels each block is
         int blockSize = size.x / NUM_BLOCKS_WIDE;
@@ -79,10 +90,13 @@ class SnakeGame extends SurfaceView implements Runnable{
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
+
+
         //Construct ArrayList for GameObjects
         objects = new ArrayList<>();
         objects.add(mApple);
         objects.add(mSnake);
+
 
     }
 
@@ -185,8 +199,9 @@ class SnakeGame extends SurfaceView implements Runnable{
         if (mSurfaceHolder.getSurface().isValid()) {
             mCanvas = mSurfaceHolder.lockCanvas();
 
-            // Fill the screen with a color
-            mCanvas.drawColor(Color.argb(255, 20, 182, 120));
+            // Fill the screen with a color and set the color to transparent
+            //so that the background would load
+            mCanvas.drawColor(Color.argb(100, 20, 182, 120));
 
 
             // Set the size and color of the mPaint for the text
@@ -195,6 +210,9 @@ class SnakeGame extends SurfaceView implements Runnable{
 
             // Draw the score
             mCanvas.drawText("" + mScore, 20, 120, mPaint);
+
+            //Draws the background image
+            mCanvas.drawBitmap(resizedBackground, 0,0, null);
 
             // Draw the apple, the snake
             for(GameObject g : objects){
@@ -207,8 +225,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             //Draw names on the top right corner of the app
             //Also acts as pause button
             mPaint.setTextSize(80);
-            mCanvas.drawText("Tyson Huynh", 1700, 100, mPaint);
-            mCanvas.drawText("Matthew Junio", 1640, 200, mPaint);
+
 
 
             // Draws pause button when not paused
