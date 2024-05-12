@@ -27,7 +27,7 @@ import androidx.constraintlayout.utils.widget.MotionButton;
 
 import java.util.ArrayList;
 
-class SnakeGame extends SurfaceView implements Runnable{
+class SnakeGame extends SurfaceView implements Runnable, Frame{
     /**
      * Class splitting
      *
@@ -228,7 +228,7 @@ class SnakeGame extends SurfaceView implements Runnable{
 
     private SurfaceHolder mSurfaceHolder;
 
-    private StatManager statManager;
+    //private StatManager statManager;
 
     private ScreenManager screenManager;
     private GameSound gameSound;
@@ -239,9 +239,11 @@ class SnakeGame extends SurfaceView implements Runnable{
     private Context c;
     // And an apple
     private Apple mApple1;
+
     private Apple mApple2;
     private Apple mApple3;
     private Apple mApple4;
+
 
     private Canvas mCanvas;
 
@@ -249,6 +251,9 @@ class SnakeGame extends SurfaceView implements Runnable{
 
     private ArrayList<GameObject> objects;
 
+    /**
+     * ArrayList consisting of all GameItems active on the board
+     */
     private ArrayList<GameItem> activeItems;
 
     private ArrayList<GameItem> cooldownItems;
@@ -260,50 +265,15 @@ class SnakeGame extends SurfaceView implements Runnable{
         super(context);
         c = context;
         s = new Screen(size);
-
-        gManager = new GameObjectManager(context, s);
-        //only used by draw function as of now
-        statManager = new StatManager(gManager);
-        //only used by draw function as of now
         screenManager = new ScreenManager(s, context);
 
-        //used everywhere
-        activeItems = new ArrayList<GameItem>();
+        gManager = new GameObjectManager(context, s);
+        mSnake = new Snake(context, s);
 
-        //used only at run() function
-        gameSound = new GameSound(context);
-
-        // Initialize the drawing objects
         //used for drawing
         mSurfaceHolder = getHolder();
         //used for drawing
         mCanvas = new Canvas();
-
-        // Call the constructors of our two game objects
-        //used everywhere
-        mSnake = new Snake(context, s);
-
-        //used everywhere
-        mApple1 = new Apple(context, activeItems, s);
-        mApple2 = new Apple(context, activeItems, s);
-        mApple3 = new Apple(context, activeItems, s);
-        mApple4 = new Apple(context, activeItems, s);
-
-
-        //Construct ArrayList for GameObjects
-
-        activeItems.add(mApple1);
-        activeItems.add(mApple2);
-        activeItems.add(mApple3);
-        activeItems.add(mApple4);
-
-        objects = new ArrayList<GameObject>();
-        objects.add(mApple1);
-        objects.add(mApple2);
-        objects.add(mApple3);
-        objects.add(mApple4);
-        objects.add(mSnake);
-
     }
 
 
@@ -314,10 +284,12 @@ class SnakeGame extends SurfaceView implements Runnable{
         mSnake.reset();
 
         // Get the apple ready for dinner
-        mApple1.spawn();
+        gManager = new GameObjectManager(c, s);
+
+        //mApple1.spawn();
 
         // Reset the mScore
-        statManager.reset();
+        //statManager.reset();
 
         // Setup mNextFrameTime so an update can triggered
         mNextFrameTime = System.currentTimeMillis();
@@ -344,7 +316,7 @@ class SnakeGame extends SurfaceView implements Runnable{
     public boolean updateRequired() {
 
         // Run at 10 frames per second
-        final long TARGET_FPS = 10;
+        final long TARGET_FPS = FRAMES_PER_SECOND;
         // There are 1000 milliseconds in a second
         final long MILLIS_PER_SECOND = 1000;
 
@@ -369,50 +341,25 @@ class SnakeGame extends SurfaceView implements Runnable{
     public void update() {
         // Move the snake
         mSnake.move();
-        statManager.incrementFrameCount();
-
-        for(GameItem g: gManager.activeItems) {
-            // Did the head of the snake eat the apple?
-            if (mSnake.checkDinner(g.getLocation())) {
-                // This reminds me of Edge of Tomorrow.
-                // One day the apple will be ready!
-                g.spawn();
-
-                // Add to  mScore
-                statManager.incrementScore();
-                // Play a sound
-                gameSound.play(gameSound.mEat_ID);
-            }
-        }
-        /**
-         * To satisfy the "invulnerable powerup, we can check what
-         * the type of the powerup is here!!
-         */
-        // Did the snake die?
-        if (mSnake.detectDeath() ) {
-            // Pause the game ready to start again
-            gameSound.play(gameSound.mCrash_ID);
-
+        //Implements the gameLogic
+        gManager.gameLogic(mSnake);
+        //Checks if Snake died
+        if(mSnake.die())
             mPaused = true;
-
-        }
-
     }
-
-
 
     // Do all the drawing
     public void draw() {
         // Get a lock on the mCanvas
         if (mSurfaceHolder.getSurface().isValid()) {
+            //Locks the Canvas
             mCanvas = mSurfaceHolder.lockCanvas();
-            screenManager.drawScreen(mPaused, statManager, mCanvas);
-
-            // Draw the apple, the snake
-            for(GameObject g : objects){
-                g.draw(mCanvas);
-            }
-
+            //Draws the screen, and background
+            screenManager.drawScreen(mPaused, mSnake.stat, mCanvas);
+            //Draws all GameItems
+            gManager.drawGameItems(mCanvas);
+            //Draws the snake
+            mSnake.draw(mCanvas);
             // Unlock the mCanvas and reveal the graphics for this frame
             mSurfaceHolder.unlockCanvasAndPost(mCanvas);
         }
@@ -470,7 +417,7 @@ class SnakeGame extends SurfaceView implements Runnable{
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
                     mSnake.changeDirection(Snake.Heading.RIGHT);
                     break;
-
+                /**
                 case KeyEvent.KEYCODE_SPACE :
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
                         // Toggle the pause state
@@ -486,6 +433,7 @@ class SnakeGame extends SurfaceView implements Runnable{
                         return true; // Key event handled
 
                     }
+                 **/
             }
 
         }

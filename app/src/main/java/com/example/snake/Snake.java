@@ -20,6 +20,10 @@ class Snake implements Movable, GameObject {
 
     protected Point head;
 
+    protected StatManager stat = new StatManager();
+
+    protected GameSound gameSound;
+
     // For tracking movement Heading
     enum Heading { UP, RIGHT, DOWN, LEFT }
     private Heading heading = Heading.RIGHT;
@@ -31,7 +35,8 @@ class Snake implements Movable, GameObject {
 
     Snake(Context context, Screen s) {
         this.s = s;
-        mMoveRange = s.getPoint();
+        gameSound = new GameSound(context);
+        mMoveRange = s.getConstraint();
 
         // Create and scale the bitmaps
         mBitmapHeadRight = BitmapFactory
@@ -99,6 +104,9 @@ class Snake implements Movable, GameObject {
 
         // Start with a single snake segment
         segmentLocations.add(new Point(s.NUM_BLOCKS_WIDE / 2, s.mNumBlocksHigh / 2));
+
+        //Resets StatManager
+        stat.reset();
     }
 
     @Override
@@ -120,6 +128,17 @@ class Snake implements Movable, GameObject {
         }
     }
 
+    /**
+     * Returns that the game is over pretty much.
+     */
+    boolean die(){
+        if(detectDeath()){
+            gameSound.play(gameSound.mCrash_ID);
+            return true;
+        }
+        return false;
+    }
+
     boolean detectDeath() {
         //check for death
         boolean dead = false;
@@ -136,14 +155,50 @@ class Snake implements Movable, GameObject {
         return dead;
     }
 
-    boolean checkDinner(Point appleLocation) {
+    /**
+     * Add method that checks for snake interaction
+     * and if so returns type of Object.
+     *
+     * If food, then....
+     *
+     * If powerup, then...
+     *
+     * If obstacle, then...
+     */
+    boolean interact(GameItem g){
+        //Increases the number of frames by 1
+        stat.incrementFrameCount();
         //check if the snake's head has collided with the apple
-        Point head = segmentLocations.get(0);
-        if (head.x == appleLocation.x && head.y == appleLocation.y) {
-            segmentLocations.add(new Point(-10, -10));
+        head = segmentLocations.get(0);
+        Point loc = g.getLocation();
+        if (head.x == loc.x && head.y == loc.y) {
+            //if the interacted object is food
+            if(g instanceof Food){
+                Food food = (Food)g;
+                consumeFood(food.MASS_GAIN);
+                stat.addScore(food.SCORE_GAIN);
+                gameSound.play(gameSound.mEat_ID);
+
+            }else if(g instanceof Obstacle){
+                //Obstacle logic
+            }else if(g instanceof Powerup){
+                //Powerup logic
+            }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Adds mass to the snake
+     * @param mass amount of mass to add
+     */
+
+
+    void consumeFood(int mass) {
+        for(int i = 0; i < mass; i++) {
+            segmentLocations.add(new Point(-10, -10));
+        }
     }
 
     @Override

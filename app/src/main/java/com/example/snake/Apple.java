@@ -16,13 +16,13 @@ class Apple extends Food implements GameObject {
     // Not in pixels
 
     /// Set up the apple in the constructor
-    Apple(Context context, ArrayList<GameItem> activeItems, Screen s){
-        super(context, activeItems, s, 0, 25, 1, 1);
+    Apple(Context context, Screen s){
+        super(context, s, 2, 10, 1, 1);
     }
 
     @Override
     public void initializeBitmap(Context context) {
-        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.crate);
         // Resize the bitmap
         mBitmapItem = Bitmap.createScaledBitmap(mBitmapItem, s.blockSize, s.blockSize, false);
     }

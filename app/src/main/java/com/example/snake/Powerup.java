@@ -6,45 +6,11 @@ import java.util.ArrayList;
 
 public abstract class Powerup extends GameItem implements GameObject{
     /**
-     * CONSTRUCTOR
-     *
-     *
-     * FIELD
-     * //The amount of moves that the powerup will be activated
-     * activationMoves : int
-     *
-     *
-     *
-     *METHOD
-     *
-     * //Checks to see if a
-     * timeup(): boolean
-     *
-     *BEHAVIOR
-     * Some kind of effect will be added based on the type of powerup
-     *
-     * If powerup becomes activated, it technically
-     * always gets attributed to the snake's Head
-     *
-     * So activated powerups, have a dependency to the Snake
-     *
      * CONCRETE SUB-CLASSES
      *
-     * Speed x2. (will involve manipulating the number of moves,
-     *            snake takes per frame)
-     *            [needs to intervene in SnakeGame.run()]
+     * Ambulance Siren   (will double the speed)
      *
-     * Invulnerable (will involve removing all instances of death
-     *               unless snake moves off map)
-     *               [needs to stop calling snake.death]
-     *
-     * Food Mania  (will involve turning all gameItems that are type
-     *              Obstacle to Food) [needs access to ActiveItems]
-     *
-     * Kirby        (will make all Food items into Gourmet Food)
-     *              [Needs access to ActiveItems]
-     *
-     *
+     * Cop Siren         (Invulnerable to Obstacles)
      *
      */
     /**
@@ -60,13 +26,13 @@ public abstract class Powerup extends GameItem implements GameObject{
 
     public Powerup(Context context, ArrayList<GameItem> activeItems, Screen s,
                    int cooldown, int vanish, int activation){
-        super(context, activeItems, s, cooldown, vanish);
+        super(context, s, cooldown, vanish);
         ACTIVATION = activation;
         movesTillDeactivate = ACTIVATION;
     }
 
     /**
-     * Reduces the number of moves the Powerup is activated
+     * Reduces the number of frames the Powerup is activated
      */
     public void reduceActivation(){
         movesTillDeactivate--;

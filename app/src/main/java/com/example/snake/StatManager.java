@@ -14,17 +14,15 @@ public class StatManager {
     protected int mScore;
     private int frameCount;
 
-    private GameObjectManager g;
 
     /**
      * Basically says that there is a new round every minute.
      */
     private final int FRAMES_TILL_NEW_ROUND = 10 * 60;
 
-    public StatManager(GameObjectManager gameObjectManager){
+    public StatManager(){
         mScore = 0;
         frameCount = 0;
-        g = gameObjectManager;
     }
 
     /**

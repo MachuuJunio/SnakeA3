@@ -9,7 +9,7 @@ import android.graphics.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class GameItem implements GameObject {
+public abstract class GameItem implements GameObject, Frame {
 
 
     //Contains drawing elements
@@ -38,15 +38,17 @@ public abstract class GameItem implements GameObject {
         VANISH = 0;
     }
 
-    public GameItem(Context context, ArrayList<GameItem> activeItems, Screen s,
+    public GameItem(Context context, Screen s,
                     int COOLDOWN, int VANISH) {
-        this.COOLDOWN = COOLDOWN;
-        this.VANISH = VANISH;
-        movesTillReturn = COOLDOWN;
-        movesTillVanish = VANISH;
+        this.COOLDOWN = COOLDOWN * FRAMES_PER_SECOND;
+        this.VANISH = VANISH * FRAMES_PER_SECOND;
+        movesTillReturn = this.COOLDOWN;
+        movesTillVanish = this.VANISH;
         this.s = s;
         initializeBitmap(context);
-        spawn(activeItems);
+        //hides apple
+        location = new Point(-10,-10);
+        //spawn(activeItems);
     }
 
     /**
@@ -129,6 +131,7 @@ public abstract class GameItem implements GameObject {
 
     /**
      * In the situation where the snakehead interacts with the GameItem
+     * resets the num frames till despawn
      */
     public void reset(){
         movesTillReturn = COOLDOWN;

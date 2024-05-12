@@ -5,7 +5,19 @@ import android.content.Context;
 import java.util.ArrayList;
 
 public abstract class Obstacle extends GameItem implements GameObject{
-
+    /**
+     * CONCRETE SUBCLASSES
+     *
+     * Robber  (Steals 2 packages) [reduces score]
+     *         {if mass less than 2, you're fired}
+     *
+     * Cone    (Drop 1 package) [reduces score]
+     *          {if mass less than 1, you're fired}
+     *
+     * Children (Gameover) {how dare you hit a child}
+     *
+     *
+     */
     /**
      * Number of frames the Obstacle will affect the snake if touched
      */
@@ -20,8 +32,8 @@ public abstract class Obstacle extends GameItem implements GameObject{
     }
 
     public Obstacle(Context context, ArrayList<GameItem> activeItems, Screen s,
-                    int cooldown, int vanish, int activation){
-        super(context, activeItems, s, cooldown, vanish);
+                   int cooldown, int vanish, int activation){
+        super(context, s, cooldown, vanish);
         ACTIVATION = activation;
         movesTillDeactivate = ACTIVATION;
     }
