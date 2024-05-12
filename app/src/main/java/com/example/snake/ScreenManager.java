@@ -13,6 +13,8 @@ public class ScreenManager {
 
     Canvas canvas;
 
+    Snake snake;
+
     /**
      * Takes in an instance of the Screen, and context.
      * @param s
@@ -45,10 +47,9 @@ public class ScreenManager {
     /***
      * Writes the names of the programmer in the upper right corner, when the game is paused
      */
-    private void writeNames(Canvas canvas){
+    private void writeTitle(Canvas canvas){
         s.mPaint.setTextSize(80);
-        canvas.drawText("Tyson Huynh", 1700, 100, s.mPaint);
-        canvas.drawText("Matthew Junio", 1640, 200, s.mPaint);
+        canvas.drawText("Mover Outers !", 1700, 100, s.mPaint);
     }
 
     /**
@@ -80,15 +81,25 @@ public class ScreenManager {
         s.mPaint.setTextSize(70);
         canvas.drawText("RESUME", 1900, 950, s.mPaint);
     }
+    public void drawLeaderBoard(Canvas canvas, StatManager stat){
+        s.mPaint.setColor(Color.argb(255, 255, 255, 255));
+        s.mPaint.setTextSize(50);
+
+        canvas.drawText("Leader Board", 20, 200, s.mPaint);
+        canvas.drawText("" + stat.leaderBoard[0], 20, 250, s.mPaint);
+        canvas.drawText("" + stat.leaderBoard[1], 20, 300, s.mPaint);
+        canvas.drawText("" + stat.leaderBoard[2], 20, 350, s.mPaint);
+    }
 
     /**
      * Decides what should be drawn based on the pause state
      * @param mPaused determines whether the game is paused or not
      */
-    private void drawPlayState(boolean mPaused, Canvas canvas){
+    private void drawPlayState(boolean mPaused, Canvas canvas, StatManager stat){
         if(mPaused){
             drawResume(canvas);
-            writeNames(canvas);
+            writeTitle(canvas);
+            drawLeaderBoard(canvas,stat);
         }else{
             drawPause(canvas);
         }
@@ -102,7 +113,7 @@ public class ScreenManager {
     public void drawScreen(boolean mPaused, StatManager stat, Canvas canvas){
         drawBackground(canvas);
         drawScore(stat, canvas);
-        drawPlayState(mPaused, canvas);
+        drawPlayState(mPaused, canvas, stat);
     }
 
 
