@@ -1,12 +1,16 @@
 package com.example.snake;
 
 import android.content.Context;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
 /**
  * Class in charge of drawing the game
  */
+
 public class ScreenManager {
     Screen s;
     Context context;
@@ -21,14 +25,30 @@ public class ScreenManager {
     public ScreenManager(Screen s, Context context){
         this.s = s;
         this.context = context;
+
+
+
     }
 
     /**
      * Draws the background of the Game
      */
     private void drawBackground(Canvas canvas){
-        canvas.drawColor(Color.argb(255, 20, 182, 120));
+
+        //Loads the background image
+        Bitmap backgroundBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.road2);
+
+        int dstWidth = 2220;
+        int dstHeight = 1015;
+
+        //Creates a scaled bitmap of the background image (resized image)
+        Bitmap resizedBackground = Bitmap.createScaledBitmap(backgroundBitmap, dstWidth, dstHeight, true);
+
+        //Draws the background image to the screen
+        canvas.drawBitmap(resizedBackground, 0,0, null);
+
     }
+
 
     /**
      * Draws the score
