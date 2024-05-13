@@ -15,6 +15,9 @@ public class GameSound extends SurfaceView {
     protected SoundPool mSP;
     protected final int mEat_ID;
     protected final int mCrash_ID;
+    protected final int mFreeze_ID;
+
+    protected final int mBlackout_ID;
 
     public GameSound(Context context) {
         super(context);
@@ -27,6 +30,8 @@ public class GameSound extends SurfaceView {
         AssetManager assetManager = context.getAssets();
         mEat_ID = assignSound("get_apple.ogg", assetManager);
         mCrash_ID = assignSound("snake_death.ogg", assetManager);
+        mFreeze_ID = assignSound("freezesound.ogg", assetManager);
+        mBlackout_ID = assignSound("blackout.ogg", assetManager);
     }
 
     /**

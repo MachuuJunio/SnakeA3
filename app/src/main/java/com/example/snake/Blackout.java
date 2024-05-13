@@ -11,7 +11,7 @@ public class Blackout extends Obstacle{
 
     @Override
     public void initializeBitmap(Context context) {
-        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.head);
+        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.blackouticon);
         // Resize the bitmap
         mBitmapItem = Bitmap.createScaledBitmap(mBitmapItem, s.blockSize, s.blockSize, false);
     }

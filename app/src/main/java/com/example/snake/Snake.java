@@ -192,8 +192,10 @@ class Snake implements Movable{
                 gameSound.play(gameSound.mEat_ID);
 
             }else if(g instanceof Obstacle){
+                gameSound.play(gameSound.mBlackout_ID);
                 //Obstacle logic
             }else if(g instanceof Powerup){
+                gameSound.play(gameSound.mFreeze_ID);
                 //Powerup logic
                 //powerup = (Powerup)g;
             }
