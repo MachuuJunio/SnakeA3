@@ -40,6 +40,7 @@ class Snake implements Movable{
     Snake(Context context, Screen s) {
         this.s = s;
         gameSound = new GameSound(context);
+
         mMoveRange = s.getConstraint();
 
         // Create and scale the bitmaps
@@ -115,6 +116,7 @@ class Snake implements Movable{
 
     @Override
     public void move() {
+
         // Make it the same value as the next segment
         // going forwards towards the head
         for (int i = segmentLocations.size() - 1; i > 0; i--) {
@@ -178,6 +180,8 @@ class Snake implements Movable{
      * If obstacle, then...
      */
     boolean interact(GameItem g){
+
+
         //Increases the number of frames by 1
         stat.incrementFrameCount();
         //check if the snake's head has collided with the apple
@@ -194,6 +198,7 @@ class Snake implements Movable{
             }else if(g instanceof Obstacle){
                 //Obstacle logic
             }else if(g instanceof Powerup){
+                gameSound.play(gameSound.mFreeze_ID);
                 //Powerup logic
                 //powerup = (Powerup)g;
             }

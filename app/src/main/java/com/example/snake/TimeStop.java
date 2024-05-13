@@ -13,7 +13,7 @@ public class TimeStop extends Powerup{
     }
     @Override
     public void initializeBitmap(Context context) {
-        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
+        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.freezepowerup);
         // Resize the bitmap
         mBitmapItem = Bitmap.createScaledBitmap(mBitmapItem, s.blockSize, s.blockSize, false);
     }
@@ -21,6 +21,7 @@ public class TimeStop extends Powerup{
     @Override
     public void activationEffect() {
         //SoundPool logic
+
     }
 
 }

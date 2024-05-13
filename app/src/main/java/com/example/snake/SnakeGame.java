@@ -80,6 +80,7 @@ class SnakeGame extends SurfaceView implements Runnable, Frame{
         // reset the snake
         mSnake.reset();
 
+
         // Get the apple ready for dinner
         gManager = new GameObjectManager(c, s);
 
