@@ -1,6 +1,7 @@
 package com.example.snake;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -13,52 +14,42 @@ public abstract class Powerup extends GameItem implements GameObject{
      * Powerup name      (activation effect)
      *                   {how effect can be achieved}
      *                   [availability] [activation time]
-     *                   [stayTime] [cooldown
-     * -------------------------
-     *
-     *
-     * Ambulance Siren   (will double the speed)
+     *                   [stayTime] [cooldown]
+     *                   {Sound}
+     *                   ...additional details
+     * -------------------------------------------------------------------
+     * Ambulance         (will double the speed)
      *                   {Calls snake.move() twice}
-     *                   [1 powerup] [activation time 3 seconds]
-     *                   [stayTime 2 seconds] [cooldown 11 seconds]
-     *                   {Sound: Ambulance Siren}
-     *
-     * Cop Siren         (Invulnerable to Obstacles, Debuff)
-     *                   {if snake.interact is Obstacle or Debuff ignore}
-     *                   [1 powerup] [activation time 3 seconds]
-     *                   [stayTime 3 seconds] [cooldown 10 seconds]
-     *                   {Sound: Police Siren}
-     *
-     * Amazon Ring       (Doubles mass, and score)
+     *                   [1] [3]
+     *                   [2] [11]
+     *                   {Ambulance Siren}
+     *------------------------------------------------------------------
+     * Cop               (Invulnerable to Obstacles, Debuff)
+     *                   {if snake.interact() is Obstacle or Debuff ignore}
+     *                   [1] [3]
+     *                   [3] [10]
+     *                   {Police Siren}
+     *------------------------------------------------------------------
+     * Amazon            (Doubles mass, and score)
      *                   {Multiply by two for both 'Food' final var}
-     *                   [1 powerup] [activation 4 seconds]
-     *                   [stayTime 2 seconds] [cooldown 12 seconds]
-     *                   //powerup.getType() = "Amazon";
-     *                   //powerup should recreate the GameItem as a Food
-     *                   //Find all occurances of Food in
-     *                   //...activeItems, and cooldownItems
-     *                   //Replace with same parametes
-     *                   {Sound Ring notification }
-     *
+     *                   [1] [4]
+     *                   [2] [12]
+     *                   {Ring notification}
+     *-----------------------------------------------------------------------
      * Time Stop         (Stops cooldown, and despawning of GameItems)
      *                   {Don't call gom.reduceStay() and gom.reduceCooldown()}
-     *                   [1 powerup] [activation 5 seconds]
-     *                   [stayTime 3 seconds] [cooldown 12 seconds]
-     *                   {Sound: Church bell}
+     *                   [1] [5]
+     *                   [3] [12]
+     *                   {Church bell}
      *
-     * WHAT IS COMMON WITH THE EFFECTS?
-     *      additional call, modification of call
-     * METHODS
-     * //the activation effect of the Powerup
-     * activationEffect()
      *
-     * INFO
-     * If a powerup is interacted with, all other powerups,
-     * will be suspended.
+     * RULES
+     *          If a powerup is activated, all other powerups will be isolated
      *
-     * POWERUP
+     * EFFECTS
      *      Affects speed, mass, score, ActiveItems, and Snake methods
      */
+
     /**
      * The amount of frames the Powerup will be activated for
      */
@@ -73,8 +64,8 @@ public abstract class Powerup extends GameItem implements GameObject{
     public Powerup(Context context, Screen s,
                    int cooldown, int vanish, int activation){
         super(context, s, cooldown, vanish);
-        ACTIVATION = activation;
-        movesTillDeactivate = ACTIVATION;
+        ACTIVATION = activation * FRAMES_PER_SECOND;
+        movesTillDeactivate = this.ACTIVATION;
     }
 
     /**
@@ -82,6 +73,7 @@ public abstract class Powerup extends GameItem implements GameObject{
      */
     public void reduceActivation(){
         movesTillDeactivate--;
+        Log.d("Powerup", "Reduced activation: " + movesTillDeactivate);
     }
 
     /**
@@ -97,6 +89,7 @@ public abstract class Powerup extends GameItem implements GameObject{
     public boolean deactivate(){
         if(movesTillDeactivate == 0){
             movesTillDeactivate = ACTIVATION;
+            Log.d("Powerup", "Despawning item: " + this);
             return true;
         }
         return false;
@@ -107,9 +100,4 @@ public abstract class Powerup extends GameItem implements GameObject{
      */
     public abstract void activationEffect();
 
-    /**
-     * Checks whether the powerup is capable of deflecting
-     * gameEnding actions
-     */
-    public abstract boolean gameEnding();
 }

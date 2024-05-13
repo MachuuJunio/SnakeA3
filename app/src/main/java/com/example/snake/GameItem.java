@@ -5,12 +5,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class GameItem implements GameObject, Frame {
 
+    /**
+     * Would be best to also add a time for despawning
+     */
 
     //Contains drawing elements
     Screen s;
@@ -59,7 +63,7 @@ public abstract class GameItem implements GameObject, Frame {
     public abstract void initializeBitmap(Context context);
 
     /**
-     * Spawns the gameItem at an unoccupied position
+     * Sets the spawn location of GameItem at an unoccupied position
      * @param activeItems the list of all items on the Screen
      */
     public void spawn(ArrayList<GameItem> activeItems) {
@@ -84,7 +88,7 @@ public abstract class GameItem implements GameObject, Frame {
     }
 
     /**
-     * Spawns a GameItem, when there are none on the screen
+     * Sets the spawn location of GameItem when none are on the Screen
      */
     protected void spawn(){
         Random random = new Random();
@@ -94,44 +98,52 @@ public abstract class GameItem implements GameObject, Frame {
     }
 
     /**
-     * @return number of frames remaining till cooldown is finished for the GameItem
+     * @return number of frames remaining till GameItem will return to the screen
      */
     protected int getCooldownRemaining(){
         return movesTillReturn;
     }
 
+    /**
+     * @return number of frames remaining till GameItem automatically disappears from screen
+     */
     protected int getStayRemaining(){
         return movesTillVanish;
     }
 
     /**
-     * Reduces the number of frames remaining till Cooldown is complete by 1
+     * Reduces the number of frames remaining till GameItem will return to the screen
      */
     public void reduceCooldown() {
         movesTillReturn--;
+        Log.d("GameItem", "Reduced cooldown: " + movesTillReturn);
     }
 
     /**
-     * Reduces the number of frames till GameItem vanishes by 1.
+     * Reduces the number of frames till GameItem disappears from the screen
      */
     public void reduceStay() {
         movesTillVanish--;
+        Log.d("GameItem", "Reduced stay: " + movesTillVanish);
     }
 
     /**
-     * @return whether the GameItem should be despawned
+     * @return determines whether the GameItem should disappear from the screen
+     * in current frame
      */
     public boolean despawn() {
-        if(movesTillVanish == 0){
+        if(movesTillVanish <= 0){
             movesTillVanish = VANISH;
+            Log.d("GameItem", "Despawning item: " + this);
             return true;
         }
         return false;
     }
 
     /**
-     * In the situation where the snakehead interacts with the GameItem
-     * resets the num frames till despawn
+     * Resets the default number of frames to dissappear for GameItem,
+     * if the GameItem interacts with the snake head before it can
+     * automatically despawn
      */
     public void reset(){
         movesTillReturn = COOLDOWN;
@@ -139,43 +151,12 @@ public abstract class GameItem implements GameObject, Frame {
     }
 
     /**
-     * @return type of GameItem, the GameItem is in string representation
-     */
-    public String type(){
-        if(this instanceof Food){
-            return "Food";
-        }else if(this instanceof Powerup){
-            return "Powerup";
-        }else if(this instanceof Obstacle) {
-            return "Obstacle";
-        }
-        else{
-            return "No Type";
-        }
-    }
-
-
-
-    //Checks to see if movesTillReturn == 0
-
-    /**
-     * @return whether the GameItem should respawn
+     * @return determines whether GameItem should return to the screen at current frame
      */
     public boolean respawn() {
         if(movesTillReturn == 0){
             movesTillReturn = COOLDOWN;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @param snakeHead the location of the head of the snake
-     * @return whether the snake's head has interacted with the GameObject
-     */
-    public boolean interact(Point snakeHead) {
-        if(snakeHead.equals(getLocation())) {
-            this.reset();
+            Log.d("GameItem", "Respawning item: " + this);
             return true;
         }
         return false;
@@ -191,7 +172,7 @@ public abstract class GameItem implements GameObject, Frame {
 
 
     /**
-     * draws the gameItem
+     * draws the gameItem, doing the actual spawning
      */
     public void draw(Canvas canvas) {
         canvas.drawBitmap(mBitmapItem,

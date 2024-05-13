@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class TimeStop extends Powerup{
 
     public TimeStop(Context context, Screen s){
-        super(context, s, 12, 3, 5);
+        super(context, s, 12, 6, 15);
     }
     @Override
     public void initializeBitmap(Context context) {
@@ -20,11 +20,7 @@ public class TimeStop extends Powerup{
 
     @Override
     public void activationEffect() {
-
+        //SoundPool logic
     }
 
-    @Override
-    public boolean gameEnding() {
-        return false;
-    }
 }

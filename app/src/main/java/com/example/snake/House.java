@@ -11,7 +11,7 @@ class House extends Food implements GameObject {
 
     /// Set up the apple in the constructor
     House(Context context, Screen s){
-        super(context, s, 2, 10, 1, 1);
+        super(context, s, 1, 6, 1, 1);
     }
 
     @Override
