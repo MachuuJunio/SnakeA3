@@ -1,29 +1,13 @@
 package com.example.snake;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Typeface;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.os.Build;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Comparator;
 
-
-import androidx.constraintlayout.utils.widget.MotionButton;
 
 import java.util.ArrayList;
 
@@ -238,11 +222,11 @@ class SnakeGame extends SurfaceView implements Runnable, Frame{
     private Screen s;
     private Context c;
     // And an apple
-    private Apple mApple1;
+    private House mApple1;
 
-    private Apple mApple2;
-    private Apple mApple3;
-    private Apple mApple4;
+    private House mApple2;
+    private House mApple3;
+    private House mApple4;
 
 
     private Canvas mCanvas;

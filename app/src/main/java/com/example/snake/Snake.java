@@ -18,6 +18,8 @@ class Snake implements Movable, GameObject {
     // How big is the entire grid
     private Point mMoveRange;
 
+    protected Powerup powerup;
+
     protected Point head;
 
     protected StatManager stat = new StatManager();
@@ -156,6 +158,14 @@ class Snake implements Movable, GameObject {
     }
 
     /**
+     * Checks to see if a powerup, has been activated!
+     * @return
+     */
+    private boolean activatedPowerup(){
+        return true;
+    }
+
+    /**
      * Add method that checks for snake interaction
      * and if so returns type of Object.
      *
@@ -183,6 +193,7 @@ class Snake implements Movable, GameObject {
                 //Obstacle logic
             }else if(g instanceof Powerup){
                 //Powerup logic
+                //powerup = (Powerup)g;
             }
             return true;
         }

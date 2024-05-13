@@ -57,10 +57,11 @@ public class GameObjectManager {
      * and will be assigned unique locations on the board
      */
     private void setGameItems(){
-        activeItems.add(new Apple(c, s));
-        activeItems.add(new Apple(c, s));
-        activeItems.add(new Apple(c, s));
-        activeItems.add(new Apple(c, s));
+        activeItems.add(new House(c, s));
+        activeItems.add(new House(c, s));
+        activeItems.add(new House(c, s));
+        activeItems.add(new House(c, s));
+        activeItems.add(new TimeStop(c, s));
         spawnAll();
     }
 
@@ -98,6 +99,15 @@ public class GameObjectManager {
         }
     }
 
+     /**
+     * If powerup is activated, decrementActivation
+     */
+     private void reduceActivation(){
+         if(powerup != null){
+             powerup.reduceActivation();
+         }
+     }
+
     /**
      * @return gameItem that interacted with snakehead, if there is
      *          no such item then null value is passed.
@@ -113,6 +123,8 @@ public class GameObjectManager {
         return null;
     }
 
+
+
     /**
      * If the snake head interacts with a GameItem
      */
@@ -124,10 +136,26 @@ public class GameObjectManager {
             activeItems.remove(interactedItem);
             //Resets the Despawn time
             interactedItem.reset();
-            //add the interactedItem to the cooldownItems
-            cooldownItems.add(interactedItem);
-            //Sorts the cooldown objects by cooldown time
-            Collections.sort(cooldownItems, Comparator.comparing(GameItem::getCooldownRemaining));
+            //Checks to see if the interactedObject is a Powerup
+            if(interactedItem instanceof Powerup){
+                powerup = (Powerup)interactedItem;
+            }else {
+                //add the interactedItem to the cooldownItems
+                cooldownItems.add(interactedItem);
+                //Sorts the cooldown objects by cooldown time
+                Collections.sort(cooldownItems, Comparator.comparing(GameItem::getCooldownRemaining));
+            }
+        }
+    }
+
+    /**
+     * If a powerup is activated, checks if the powerup should be deactivated.
+     * And if it should be deactivated then it will be deactivated.
+     */
+    private void checkDeactivate(){
+        if(powerup != null && powerup.deactivate()){
+            cooldownItems.add(powerup);
+            powerup = null;
         }
     }
 
@@ -179,8 +207,12 @@ public class GameObjectManager {
      * will appear on the screen during this frame
      */
     public void gameLogic(Snake snake){
-        reduceCooldown();
-        reduceStay();
+        if(powerup == null || !(powerup instanceof TimeStop)){
+            reduceCooldown();
+            reduceStay();
+        }
+        reduceActivation();
+        checkDeactivate();
         interactionLogic(snake);
         checkDespawn();
         checkRespawn();

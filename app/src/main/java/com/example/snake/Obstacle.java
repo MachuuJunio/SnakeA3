@@ -8,15 +8,14 @@ public abstract class Obstacle extends GameItem implements GameObject{
     /**
      * CONCRETE SUBCLASSES
      *
-     * Robber  (Steals 2 packages) [reduces score]
-     *         {if mass less than 2, you're fired}
+     * Children (Gameover) {how dare you hit a pedestrian} [Score/2]
      *
-     * Cone    (Drop 1 package) [reduces score]
-     *          {if mass less than 1, you're fired}
+     * Oil [Random movement for (5) frames]
      *
-     * Children (Gameover) {how dare you hit a child}
+     * Biker (Moves from left end of screen to right end.)
      *
-     *
+     * OBSTACLE
+     *      Affects speed, snake.move(), mass, score, and
      */
     /**
      * Number of frames the Obstacle will affect the snake if touched
