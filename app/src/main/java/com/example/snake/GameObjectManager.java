@@ -2,20 +2,21 @@ package com.example.snake;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 
 /**
- * This class is responsible for encapsulating
- * the management of all GameItems,
+ * This class is responsible for
+ * encapsulating all instances of GameItem,
+ * and the management of all GameItem objects
  */
 public class GameObjectManager {
 
     /**
-     * Consists of all GameItems that are not on the screen, and
-     * waiting to respawn
+     * Consists of all GameItems that are not on the screen, waiting to respawn
      */
     private ArrayList<GameItem> cooldownItems;
 
@@ -31,13 +32,7 @@ public class GameObjectManager {
     private ArrayList<Obstacle> activatedObstacles;
 
     /**
-     * Frame class
-     *
-     */
-    /**
-     * A Powerup the snake head previously or just collided with, that has not expired
-     *
-     * this variable would be best assigned to the Snake or to an actual frame class....
+     * Powerup that is activated
      */
     protected Powerup powerup;
     private Context c;
@@ -62,6 +57,7 @@ public class GameObjectManager {
         activeItems.add(new House(c, s));
         activeItems.add(new House(c, s));
         activeItems.add(new TimeStop(c, s));
+        activeItems.add(new Blackout(c, s));
         spawnAll();
     }
 
@@ -102,15 +98,22 @@ public class GameObjectManager {
      /**
      * If powerup is activated, decrementActivation
      */
-     private void reduceActivation(){
+     private void reducePowerupActivation(){
          if(powerup != null){
              powerup.reduceActivation();
          }
      }
 
+    private void reduceObstacleActivation(){
+        if(!activatedObstacles.isEmpty()){
+            for(Obstacle o: activatedObstacles)
+                o.reduceActivation();
+        }
+    }
+
+
     /**
-     * @return gameItem that interacted with snakehead, if there is
-     *          no such item then null value is passed.
+     * @return GameItem that interacts with snake head
      */
     private GameItem interact(Snake snake){
         if(!activeItems.isEmpty()){
@@ -125,8 +128,9 @@ public class GameObjectManager {
 
 
 
+
     /**
-     * If the snake head interacts with a GameItem
+     * Game logic for snake head interaction with a GameItem
      */
     private void interactionLogic(Snake snake){
         GameItem interactedItem = this.interact(snake);
@@ -139,6 +143,9 @@ public class GameObjectManager {
             //Checks to see if the interactedObject is a Powerup
             if(interactedItem instanceof Powerup){
                 powerup = (Powerup)interactedItem;
+            }else if(interactedItem instanceof Obstacle){
+                activatedObstacles.add((Obstacle)interactedItem);
+                Collections.sort(activatedObstacles, Comparator.comparing(Obstacle::getActivationRemaining));
             }else {
                 //add the interactedItem to the cooldownItems
                 cooldownItems.add(interactedItem);
@@ -149,19 +156,38 @@ public class GameObjectManager {
     }
 
     /**
-     * If a powerup is activated, checks if the powerup should be deactivated.
-     * And if it should be deactivated then it will be deactivated.
+     * If powerup is activated, deactivates the powerup once expired
      */
-    private void checkDeactivate(){
+    private void checkPowerupDeactivate(){
         if(powerup != null && powerup.deactivate()){
-            cooldownItems.add(powerup);
+            GameItem expiredItem = (GameItem)powerup;
+            cooldownItems.add(expiredItem);
+            Collections.sort(cooldownItems, Comparator.comparing(GameItem::getCooldownRemaining));
+
             powerup = null;
         }
     }
 
     /**
-     * Check for all occurances of GameItems ready to spawn on
-     * the board, and spawn them.
+     * If powerup is activated, deactivates the powerup once expired
+     */
+    private void checkObstacleDeactivate(){
+        while(!activatedObstacles.isEmpty() && activatedObstacles.get(0).deactivate()){
+            //Gets expired Obstacle
+            Obstacle expiredObstacle = activatedObstacles.remove(0);
+            //Uses polymorphism
+            GameItem recycledItem = (GameItem)expiredObstacle;
+            //Adds recycledItem to cooldown
+            cooldownItems.add(recycledItem);
+            //Sorts GameItems in cooldown
+            Collections.sort(cooldownItems, Comparator.comparing(GameItem::getCooldownRemaining));
+
+            Log.d("GameObjectManager", "Obstacle despawned and moved to cooldown: " + recycledItem);
+        }
+    }
+
+    /**
+     * Enables spawning of all GameItems that have finished cooling down
      */
     private void checkRespawn(){
         while (!cooldownItems.isEmpty() && cooldownItems.get(0).respawn()) {
@@ -172,12 +198,16 @@ public class GameObjectManager {
             //adds the readyObject to the activeObjects
             activeItems.add(readyItem);
             //sorts the activeObjects based on despawn time
-            Collections.sort(activeItems, Comparator.comparing(GameItem::getCooldownRemaining));
+            Collections.sort(activeItems, Comparator.comparing(GameItem::getStayRemaining));
+
+
+            Log.d("GameObjectManager", "Item respawned and moved to active: " + readyItem);
         }
     }
 
     /**
-     * Checks all occurance of GameItems that need to cooldown, and makes them cooldonw.
+     * Enables the isolation of all GameItems that have stayed on the Screen for their
+     * allotted number of frames
      */
     private void checkDespawn(){
         while (!activeItems.isEmpty() && activeItems.get(0).despawn()) {
@@ -186,16 +216,68 @@ public class GameObjectManager {
             //Add the recycleObject to the cooldown object
             cooldownItems.add(recycledItem);
             //sorts the cooldown objects based on the cooldown time
-            Collections.sort(cooldownItems, Comparator.comparing(GameItem::getStayRemaining));
+            Collections.sort(cooldownItems, Comparator.comparing(GameItem::getCooldownRemaining));
+
+            Log.d("GameObjectManager", "Item despawned and moved to cooldown: " + recycledItem);
         }
     }
+
+    /**
+     * A method that reduces the stay, and immediately check to see if its
+     * time for active GameItems to say byebye..
+     */
+    private void isolateExpiredItems(){
+        if(powerup == null || !(powerup instanceof TimeStop)) {
+            reduceStay();
+            checkDespawn();
+        }
+    }
+
+
+    /**
+     * A method that reduces the cooldown, and immediately check to see if it
+     * is time for isolated GameItems to say hihi
+     */
+    private void deployReadyItems(){
+        if(powerup == null || !(powerup instanceof TimeStop)) {
+            reduceCooldown();
+            checkRespawn();
+        }
+    }
+
+    /**
+     * Manages the activation time of powerup, and deactivated it once it has expired
+     */
+    private void managePowerup(){
+        reducePowerupActivation();
+        checkPowerupDeactivate();
+    }
+
+    private void manageObstacles(){
+        reduceObstacleActivation();
+        checkObstacleDeactivate();
+    }
+
+    /**
+     * Determines whether there a Blackout Obstacle is activated
+     */
+    public boolean existsBlackout(){
+        if(!activatedObstacles.isEmpty()){
+            for(Obstacle o: activatedObstacles){
+                if(o instanceof Blackout)
+                    return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Draws all the GameItems (not the snake)
      * @param mCanvas drawing tool
      */
     public void drawGameItems(Canvas mCanvas){
-        if(!activeItems.isEmpty()){
+        if(!activeItems.isEmpty() && !existsBlackout()){
             for(GameItem g: activeItems) {
                 g.draw(mCanvas);
             }
@@ -203,19 +285,14 @@ public class GameObjectManager {
     }
 
     /**
-     * The game Logic that determines what GameItems
-     * will appear on the screen during this frame
+     * Game logic that determines which GameItems are shown on the screen in current frame.
      */
     public void gameLogic(Snake snake){
-        if(powerup == null || !(powerup instanceof TimeStop)){
-            reduceCooldown();
-            reduceStay();
-        }
-        reduceActivation();
-        checkDeactivate();
+        isolateExpiredItems();
+        deployReadyItems();
+        managePowerup();
+        manageObstacles();
         interactionLogic(snake);
-        checkDespawn();
-        checkRespawn();
     }
 
 
