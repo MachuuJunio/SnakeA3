@@ -5,35 +5,27 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public abstract class GameItem implements Frame {
+public abstract class GameItem implements GameObject {
 
-    /**
-     * Would be best to also add a time for despawning
-     */
 
     //Contains drawing elements
     Screen s;
 
-    //Number of frames for cooldown
+    //number of moves for cooldown
     private final int COOLDOWN;
 
-    //Number of frames till the GameItem disappears
+    //number of moves till the GameItem disappears
     private final int VANISH;
 
-    //Number of frames after despawning the GameItem will return
+    //in how many moves after despawning the GameItem will return
     protected int movesTillReturn;
 
-    //number of  frames after spawning the GameItem will vanish
+    //in how many moves after spawning the GameItem will vanish
     protected int movesTillVanish;
-
-    private final int MUSIC_ID;
-
-    private GameSound gameSound;
 
     //The location of the GameItem
     protected Point location;
@@ -44,26 +36,21 @@ public abstract class GameItem implements Frame {
     public GameItem() {
         COOLDOWN = 0;
         VANISH = 0;
-        MUSIC_ID = -1;
     }
 
-    public GameItem(Context context, Screen s,
+    public GameItem(Context context, ArrayList<GameItem> activeItems, Screen s,
                     int COOLDOWN, int VANISH) {
-        this.COOLDOWN = COOLDOWN * FRAMES_PER_SECOND;
-        this.VANISH = VANISH * FRAMES_PER_SECOND;
-        movesTillReturn = this.COOLDOWN;
-        movesTillVanish = this.VANISH;
+        this.COOLDOWN = COOLDOWN;
+        this.VANISH = VANISH;
+        movesTillReturn = COOLDOWN;
+        movesTillVanish = VANISH;
         this.s = s;
-
-        gameSound = new GameSound(context);
-        MUSIC_ID = -1;
-
         initializeBitmap(context);
-        //hides apple
-        location = new Point(-10,-10);
-        //spawn(activeItems);
-
+        spawn(activeItems);
     }
+
+    //Creates instance of new GameItem
+    /**createGameItem() : */
 
     /**
      * Initializes the bitmapItem
@@ -73,7 +60,7 @@ public abstract class GameItem implements Frame {
     public abstract void initializeBitmap(Context context);
 
     /**
-     * Sets the spawn location of GameItem at an unoccupied position
+     * Spawns the gameItem at an unoccupied position
      * @param activeItems the list of all items on the Screen
      */
     public void spawn(ArrayList<GameItem> activeItems) {
@@ -84,7 +71,7 @@ public abstract class GameItem implements Frame {
             Random random = new Random();
 
             //Choose two random values and place the apple
-            //temp = new Point();
+            temp = new Point();
             temp.x = random.nextInt(s.NUM_BLOCKS_WIDE) + 1;
             temp.y = random.nextInt(s.mNumBlocksHigh - 1) + 1;
             for (GameItem g : activeItems) {
@@ -98,7 +85,7 @@ public abstract class GameItem implements Frame {
     }
 
     /**
-     * Sets the spawn location of GameItem when none are on the Screen
+     * Spawns a GameItem, when there are none on the screen
      */
     protected void spawn(){
         Random random = new Random();
@@ -108,72 +95,64 @@ public abstract class GameItem implements Frame {
     }
 
     /**
-     * @return number of frames remaining till GameItem will return to the screen
+     * @return number of frames remaining till cooldown is finished for the GameItem
      */
     protected int getCooldownRemaining(){
         return movesTillReturn;
     }
 
-    /**
-     * @return number of frames remaining till GameItem automatically disappears from screen
-     */
-    protected int getStayRemaining(){
-        return movesTillVanish;
-    }
 
     /**
-     * Reduces the number of frames remaining till GameItem will return to the screen
+     * Reduces the number of frames remaining till Cooldown is complete by 1
      */
     public void reduceCooldown() {
         movesTillReturn--;
-        Log.d("GameItem", "Reduced cooldown: " + movesTillReturn);
     }
 
     /**
-     * Reduces the number of frames till GameItem disappears from the screen
+     * Reduces the number of frames till GameItem vanishes by 1.
      */
     public void reduceStay() {
         movesTillVanish--;
-        Log.d("GameItem", "Reduced stay: " + movesTillVanish);
     }
 
     /**
-     * @return determines whether the GameItem should disappear from the screen
-     * in current frame
+     * @return whether the GameItem should be despawned
      */
     public boolean despawn() {
-        if(movesTillVanish <= 0){
+        if(movesTillVanish == 0){
             movesTillVanish = VANISH;
-            Log.d("GameItem", "Despawning item: " + this);
             return true;
         }
         return false;
     }
 
-    /**
-     * Resets the default number of frames to dissappear for GameItem,
-     * if the GameItem interacts with the snake head before it can
-     * automatically despawn
-     */
-    public void reset(){
-        movesTillReturn = COOLDOWN;
-        movesTillVanish = VANISH;
-    }
+    //Checks to see if movesTillReturn == 0
 
     /**
-     * @return determines whether GameItem should return to the screen at current frame
+     * @return whether the GameItem should respawn
      */
     public boolean respawn() {
         if(movesTillReturn == 0){
             movesTillReturn = COOLDOWN;
-            Log.d("GameItem", "Respawning item: " + this);
             return true;
         }
         return false;
     }
 
     /**
-     * @return the location of the GameItem
+     * @param snakeHead the location of the head of the snake
+     * @return whether the snake's head has interacted with the GameObject
+     */
+    public boolean interact(Point snakeHead) {
+        if(snakeHead.equals(getLocation())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the location of the GameObject
      */
     public Point getLocation() {
         return location;
@@ -182,7 +161,7 @@ public abstract class GameItem implements Frame {
 
 
     /**
-     * draws the gameItem, doing the actual spawning
+     * draws the gameItem
      */
     public void draw(Canvas canvas) {
         canvas.drawBitmap(mBitmapItem,

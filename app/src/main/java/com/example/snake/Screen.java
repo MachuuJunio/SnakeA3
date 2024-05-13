@@ -42,7 +42,7 @@ public class Screen {
     /**
      * @return a Point within the constraints of the screen
      */
-    public Point getConstraint(){
+    public Point getPoint(){
         return new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh);
     }
 

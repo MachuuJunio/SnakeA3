@@ -9,5 +9,5 @@ import android.graphics.Point;
 import java.util.Random;
 public interface GameObject {
 
-    void draw(Canvas canvas, boolean isVisible);
+    void draw(Canvas canvas);
 }
