@@ -4,20 +4,20 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-public class House extends Food{
-
-    // The location of the apple on the grid
-    // Not in pixels
-
-    /// Set up the apple in the constructor
-    House(Context context, Screen s){
-        super(context, s, 1, 6, 1, 1);
+public class Blackout extends Obstacle{
+    public Blackout(Context context, Screen s){
+        super(context, s, 12, 6, 10);
     }
 
     @Override
     public void initializeBitmap(Context context) {
-        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.crate);
+        mBitmapItem = BitmapFactory.decodeResource(context.getResources(), R.drawable.head);
         // Resize the bitmap
         mBitmapItem = Bitmap.createScaledBitmap(mBitmapItem, s.blockSize, s.blockSize, false);
+    }
+
+    @Override
+    public void activationEffect() {
+
     }
 }

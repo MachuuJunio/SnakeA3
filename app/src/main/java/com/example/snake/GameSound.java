@@ -30,6 +30,11 @@ public class GameSound extends SurfaceView {
     }
 
     /**
+     * @param g the GameItem of interest
+     * @return id associated with the sound for each GameItem
+     */
+
+    /**
      * Loods a sound for asset file descriptor if the file exists
      * @param fileName the local name of the file
      * @param assetManager provides access to resources
@@ -43,6 +48,13 @@ public class GameSound extends SurfaceView {
             return -1;
         }
     }
+
+    /**
+     * There should be a sound for activation, and deactivation
+     * for a powerup logically, but....
+     *
+     * Let's try to make an obstacle
+     */
 
     /**
      * Plays sound based on the id

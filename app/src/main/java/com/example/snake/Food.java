@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 import java.util.ArrayList;
 
-public abstract class Food extends GameItem implements GameObject{
+public abstract class Food extends GameItem{
     /**
      * SUB CONCRETE CLASSES
      *

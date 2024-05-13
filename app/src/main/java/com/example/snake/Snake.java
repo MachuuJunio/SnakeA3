@@ -10,7 +10,7 @@ import android.graphics.Point;
 import android.view.MotionEvent;
 import java.util.ArrayList;
 
-class Snake implements Movable, GameObject {
+class Snake implements Movable{
 
     private Screen s;
     // The location in the grid of all the segments
@@ -19,6 +19,8 @@ class Snake implements Movable, GameObject {
     private Point mMoveRange;
 
     protected Powerup powerup;
+
+    protected ArrayList<Obstacle> obstacles;
 
     protected Point head;
 
@@ -212,9 +214,14 @@ class Snake implements Movable, GameObject {
         }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        if (!segmentLocations.isEmpty()) {
+    /**
+     * Draws the snake
+     * @param canvas
+     * @param isNotVisible decides if the snake should be drawn or not.
+     */
+    public void draw(Canvas canvas, boolean isNotVisible) {
+        boolean condition = (!isNotVisible || detectDeath());
+        if (!segmentLocations.isEmpty() && condition) {
             head = segmentLocations.get(0);
             // Draw the head
             switch (heading) {
@@ -235,6 +242,13 @@ class Snake implements Movable, GameObject {
             }
         }
     }
+    /**
+     * A method were if the obstacle is oil trap
+     * Change direction of car to random direction.
+     * (1/4th chance of dying on activation immediately)
+     * moves three spaces.
+     */
+
     public void changeDirection(Heading newDirection) {
         // Only allow the snake to turn 90 degrees
         if (Math.abs(newDirection.ordinal() - this.heading.ordinal()) % 2 == 1) {
