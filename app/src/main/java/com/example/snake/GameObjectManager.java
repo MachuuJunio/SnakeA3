@@ -58,6 +58,8 @@ public class GameObjectManager {
         activeItems.add(new House(c, s));
         activeItems.add(new TimeStop(c, s));
         activeItems.add(new Blackout(c, s));
+        activeItems.add(new Blackout(c, s));
+        activeItems.add(new Blackout(c, s));
         spawnAll();
     }
 

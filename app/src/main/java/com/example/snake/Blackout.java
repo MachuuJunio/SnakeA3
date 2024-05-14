@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 
 public class Blackout extends Obstacle{
     public Blackout(Context context, Screen s){
-        super(context, s, 12, 6, 10);
+        super(context, s, 3, 6, 10);
     }
 
     @Override
