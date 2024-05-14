@@ -15,6 +15,9 @@ public class GameSound extends SurfaceView {
     protected SoundPool mSP;
     protected final int mEat_ID;
     protected final int mCrash_ID;
+    protected final int mFreeze_ID;
+
+    protected final int mBlackout_ID;
 
     public GameSound(Context context) {
         super(context);
@@ -25,9 +28,16 @@ public class GameSound extends SurfaceView {
         initializeSoundPool(isAtLeastLollipopVersion);
 
         AssetManager assetManager = context.getAssets();
-        mEat_ID = assignSound("get_box.ogg", assetManager);
-        mCrash_ID = assignSound("truck_death.ogg", assetManager);
+        mEat_ID = assignSound("get_apple.ogg", assetManager);
+        mCrash_ID = assignSound("snake_death.ogg", assetManager);
+        mFreeze_ID = assignSound("freezesound.ogg", assetManager);
+        mBlackout_ID = assignSound("blackout.ogg", assetManager);
     }
+
+    /**
+     * @param g the GameItem of interest
+     * @return id associated with the sound for each GameItem
+     */
 
     /**
      * Loods a sound for asset file descriptor if the file exists
@@ -45,11 +55,18 @@ public class GameSound extends SurfaceView {
     }
 
     /**
+     * There should be a sound for activation, and deactivation
+     * for a powerup logically, but....
+     *
+     * Let's try to make an obstacle
+     */
+
+    /**
      * Plays sound based on the id
      * @param id an integer that specifies what sound should be played
      */
     protected void play(int id){
-       mSP.play(id, 100, 100, 0, 0, 1);
+       mSP.play(id, 1, 1, 0, 0, 1);
     }
 
     /**
