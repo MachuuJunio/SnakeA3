@@ -9,4 +9,10 @@
 
     <style name="Theme.Snake" parent="Base.Theme.Snake" />
 
+    <style name="SplashScreen" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+    </style>
+
+
 </resources>

@@ -28,8 +28,8 @@ public class GameSound extends SurfaceView {
         initializeSoundPool(isAtLeastLollipopVersion);
 
         AssetManager assetManager = context.getAssets();
-        mEat_ID = assignSound("get_apple.ogg", assetManager);
-        mCrash_ID = assignSound("snake_death.ogg", assetManager);
+        mEat_ID = assignSound("get_box.ogg", assetManager);
+        mCrash_ID = assignSound("truck_death.ogg", assetManager);
         mFreeze_ID = assignSound("freezesound.ogg", assetManager);
         mBlackout_ID = assignSound("blackout.ogg", assetManager);
     }

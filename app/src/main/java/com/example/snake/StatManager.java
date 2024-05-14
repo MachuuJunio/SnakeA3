@@ -12,8 +12,10 @@ public class StatManager {
 
     private int round;
     protected int mScore;
+    private int moveCount;
     private int frameCount;
-
+    public int[] leaderBoard = {0,0,0};
+    public boolean toggleDead;
 
     /**
      * Basically says that there is a new round every minute.
@@ -24,6 +26,10 @@ public class StatManager {
         mScore = 0;
         frameCount = 0;
     }
+    public void incrementMoveCount(){
+        moveCount++;
+    }
+
 
     /**
      * Addresses the unlikely scenerio someone has survived for
@@ -85,14 +91,24 @@ public class StatManager {
     public void addScore(int add){ mScore += add;}
 
     public void reset(){
+        updateLeaderBoard();
         mScore = 0;
         frameCount = 0;
     }
 
 
-
-
-    public void createObjRules(){
-
+    public void updateLeaderBoard(){
+        if(mScore > leaderBoard[0]){
+            leaderBoard[2] = leaderBoard[1];
+            leaderBoard[1] = leaderBoard[0];
+            leaderBoard[0] = mScore;
+        }
+        else if(mScore > leaderBoard[1]){
+            leaderBoard[2] = leaderBoard[1];
+            leaderBoard[1] = mScore;
+        }
+        else if(mScore > leaderBoard[2]) {
+            leaderBoard[2] = mScore;
+        }
     }
 }
